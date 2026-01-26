@@ -17,7 +17,6 @@
             flex-direction: column;
             align-items: center;
             padding: 40px 20px;
-            /* 新增：为拒绝按钮绝对定位提供参考 */
             position: relative;
             min-height: 100vh;
             overflow-x: hidden;
@@ -49,7 +48,6 @@
             line-height: 1.8;
             color: #fff;
         }
-        /* 新增：让事由文本单独占一行的样式 */
         .reason-text {
             display: block;
             margin-bottom: 15px;
@@ -66,11 +64,15 @@
             font-size: 17px;
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
         }
+        /* 调整按钮容器布局：flex并排+间距，避免初始重叠 */
         .buttons {
             text-align: center;
             margin-top: 15px;
-            /* 新增：按钮容器相对定位，避免接受按钮位置偏移 */
-            position: relative;
+            position: relative; /* 作为拒绝按钮初始定位的容器 */
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* 两个按钮之间的初始间距 */
+            min-height: 50px; /* 确保按钮有足够显示空间 */
         }
         .btn {
             padding: 12px 30px;
@@ -78,7 +80,6 @@
             border-radius: 6px;
             font-size: 18px;
             cursor: pointer;
-            margin: 0 8px;
             transition: all 0.3s;
             font-weight: bold;
         }
@@ -86,23 +87,24 @@
             background-color: #00ff7f;
             color: #000;
             box-shadow: 0 0 10px rgba(0, 255, 127, 0.4);
+            position: relative;
+            z-index: 2; /* 确保接受按钮初始层级更高，不被遮挡 */
         }
+        /* 调整拒绝按钮初始定位：基于buttons容器，和接受按钮并排 */
         .btn.red {
             background-color: #ff4500;
             color: #fff;
             box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
-            /* 新增：拒绝按钮初始绝对定位（默认在原位置） */
             position: absolute;
-            /* 初始位置对齐原布局 */
-            left: calc(50% + 40px);
-            transform: translateX(-50%);
+            left: calc(50% + 80px); /* 初始在接受按钮右侧（基于buttons容器居中） */
+            top: 50%;
+            transform: translate(-50%, -50%);
         }
         .btn:hover {
             opacity: 0.9;
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(0, 183, 255, 0.6);
         }
-        /* 新增：拒绝按钮移动时的过渡动画 */
         .btn.red.moving {
             transition: left 0.3s ease, top 0.3s ease, transform 0.3s ease;
         }
@@ -117,10 +119,9 @@
             text-align: center;
             width: 150px;
         }
-        /* 头像容器修改为正方形：宽高统一为150px */
         .person-avatar {
             width: 150px;
-            height: 150px; /* 从180px改为150px，和宽度一致，变成正方形 */
+            height: 150px;
             margin: 0 auto 10px;
             border-radius: 8px;
             overflow: hidden;
@@ -134,7 +135,6 @@
             transform: scale(1.08);
             box-shadow: 0 0 15px rgba(0, 183, 255, 0.8);
         }
-        /* 头像图片样式：填满正方形容器 */
         .avatar-img {
             width: 100%;
             height: 100%;
@@ -154,8 +154,6 @@
             font-weight: bold;
             text-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
         }
-
-        /* 弹窗样式 */
         .modal {
             display: none;
             position: fixed;
@@ -202,10 +200,8 @@
         .close-btn:hover {
             opacity: 0.9;
         }
-
-        /* 新增：立马上线浮窗样式 */
         .online-popup {
-            display: none; /* 默认隐藏 */
+            display: none;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -217,12 +213,10 @@
             width: 90%;
             max-width: 450px;
             text-align: center;
-            z-index: 1000; /* 层级高于其他弹窗 */
+            z-index: 1000;
             box-shadow: 0 0 30px rgba(0, 255, 127, 0.8);
-            /* 弹出动画 */
             animation: popupShow 0.5s ease;
         }
-        /* 浮窗动画 */
         @keyframes popupShow {
             0% {
                 transform: translate(-50%, -50%) scale(0);
@@ -269,7 +263,6 @@
     <div class="container">
         <h1>三角洲紧急召集令</h1>
         <div class="reason">
-            <!-- 给事由文本添加专属class，确保单独占一行 -->
             <span class="reason-text">事由：三角洲行动紧急开黑，急需王牌队友支援！参与作战人员如图，点击头像查看战力详情。</span>
             <div class="compensation">我们要把我们失去的全部拿回来！</div>
             <div class="buttons">
@@ -278,22 +271,18 @@
             </div>
         </div>
         <div class="people">
-            <!-- 第一个角色：贪吃的猪（替换头像路径/链接） -->
             <div class="person">
                 <div class="person-avatar" onclick="showModal('贪吃的猪', '战力定位：后勤保障组组长<br>特长：扛伤害、捡物资，打完架第一个冲去舔包，零食永远带双倍<br>弱点：跑毒慢，容易被毒圈制裁，打游戏必点外卖')">
-                    <!-- 本地图片：src="猪头像.png" | 网络图片：src="头像链接" -->
                     <img class="avatar-img" src="abe7b2741e99b3b2a61273330415fa82.jpg" alt="贪吃的猪">
                 </div>
                 <div class="person-name">贪吃的猪</div>
             </div>
-            <!-- 第二个角色：善战的狼（替换头像路径/链接） -->
             <div class="person">
                 <div class="person-avatar" onclick="showModal('善战的狼', '战力定位：突击手兼指挥<br>特长：刚枪猛、听声辨位准，1v3不慌，指挥思路清晰<br>弱点：容易上头追人，经常追着追着进敌人包围圈')">
                     <img class="avatar-img" src="42d7f055baf1dff208c2e425dc783f03.jpg" alt="善战的狼">
                 </div>
                 <div class="person-name">善战的狼</div>
             </div>
-            <!-- 第三个角色：远见的鹰（替换头像路径/链接） -->
             <div class="person">
                 <div class="person-avatar" onclick="showModal('远见的鹰', '战力定位：狙击手兼侦察兵<br>特长：千里之外取敌人首级，提前占高点架枪，报点又快又准<br>弱点：近距离刚枪拉胯，被贴脸就只会原地打药')">
                     <img class="avatar-img" src="110db9460f3b76c8cae36c459ccc52b2.jpg" alt="远见的鹰">
@@ -304,7 +293,6 @@
     </div>
     <div class="footer">现在立刻 三角洲集合！</div>
 
-    <!-- 弹窗容器 -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
@@ -313,7 +301,6 @@
         </div>
     </div>
 
-    <!-- 新增：立马上线浮窗 -->
     <div class="online-popup" id="onlinePopup">
         <h2>✅ 立马上线！</h2>
         <p>王牌队友已就位，三角洲战场等你并肩作战！</p>
@@ -321,19 +308,16 @@
     </div>
 
     <script>
-        // 显示弹窗函数
         function showModal(title, desc) {
-            document.getElementById("myModal").innerText = title;
+            document.getElementById("modalTitle").innerText = title;
             document.getElementById("modalDesc").innerHTML = desc;
             document.getElementById("myModal").style.display = "flex";
         }
 
-        // 关闭弹窗函数
         function closeModal() {
             document.getElementById("myModal").style.display = "none";
         }
 
-        // 点击弹窗外部关闭
         window.onclick = function(event) {
             const modal = document.getElementById("myModal");
             if (event.target == modal) {
@@ -341,26 +325,18 @@
             }
         }
 
-        // 新增：拒绝按钮随机移动逻辑
         const refuseBtn = document.getElementById('refuseBtn');
         refuseBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            // 获取页面可视区域宽高（避免按钮超出屏幕）
-            const windowWidth = window.innerWidth - 150; // 减去按钮宽度，防止右侧超出
-            const windowHeight = window.innerHeight - 80; // 减去按钮高度，防止底部超出
-            
-            // 生成随机坐标
+            const windowWidth = window.innerWidth - 150;
+            const windowHeight = window.innerHeight - 80;
             const randomLeft = Math.floor(Math.random() * windowWidth);
             const randomTop = Math.floor(Math.random() * windowHeight);
-            
-            // 设置按钮位置
             this.style.left = randomLeft + 'px';
             this.style.top = randomTop + 'px';
-            // 保持按钮缩放效果
             this.style.transform = 'scale(1.05)';
         });
 
-        // 新增：接受按钮弹出浮窗逻辑
         const acceptBtn = document.getElementById('acceptBtn');
         const onlinePopup = document.getElementById('onlinePopup');
         
@@ -368,7 +344,6 @@
             onlinePopup.style.display = 'block';
         });
 
-        // 关闭立马上线浮窗
         function closeOnlinePopup() {
             onlinePopup.style.display = 'none';
         }
