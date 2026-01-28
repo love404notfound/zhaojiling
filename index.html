@@ -21,6 +21,59 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
+
+        /* --- 新增：开场蒙版样式 --- */
+        #startMask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 9999; /* 确保在最顶层 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+        
+        .start-btn-container {
+            text-align: center;
+            animation: breathe 2s infinite ease-in-out;
+        }
+
+        .start-btn {
+            padding: 20px 40px;
+            font-size: 24px;
+            color: #000;
+            background: #ffd700;
+            border: 2px solid #fff;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: transform 0.2s;
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes breathe {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(255, 215, 0, 1); }
+        }
+
+        /* 蒙版隐藏时的类 */
+        .mask-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        /* --- 蒙版样式结束 --- */
+
         .container {
             max-width: 800px;
             width: 100%;
@@ -29,7 +82,16 @@
             box-shadow: 0 4px 20px rgba(0, 183, 255, 0.2);
             padding: 30px;
             border: 1px solid #00bfff;
+            /* 初始状态稍微透明一点，等开灯后再完全显示 */
+            opacity: 0.1; 
+            transition: opacity 1.5s ease;
         }
+        
+        /* 开灯后容器变亮 */
+        .container.light-on {
+            opacity: 1;
+        }
+
         h1 {
             text-align: center;
             color: #00bfff;
@@ -64,15 +126,14 @@
             font-size: 17px;
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
         }
-        /* 调整按钮容器布局：flex并排+间距，避免初始重叠 */
         .buttons {
             text-align: center;
             margin-top: 15px;
-            position: relative; /* 作为拒绝按钮初始定位的容器 */
+            position: relative;
             display: flex;
             justify-content: center;
-            gap: 20px; /* 两个按钮之间的初始间距 */
-            min-height: 50px; /* 确保按钮有足够显示空间 */
+            gap: 20px;
+            min-height: 50px;
         }
         .btn {
             padding: 12px 30px;
@@ -88,15 +149,14 @@
             color: #000;
             box-shadow: 0 0 10px rgba(0, 255, 127, 0.4);
             position: relative;
-            z-index: 2; /* 确保接受按钮初始层级更高，不被遮挡 */
+            z-index: 2;
         }
-        /* 调整拒绝按钮初始定位：基于buttons容器，和接受按钮并排 */
         .btn.red {
             background-color: #ff4500;
             color: #fff;
             box-shadow: 0 0 10px rgba(255, 69, 0, 0.4);
             position: absolute;
-            left: calc(50% + 80px); /* 初始在接受按钮右侧（基于buttons容器居中） */
+            left: calc(50% + 80px);
             top: 50%;
             transform: translate(-50%, -50%);
         }
@@ -153,6 +213,11 @@
             color: #ff4500;
             font-weight: bold;
             text-shadow: 0 0 10px rgba(255, 69, 0, 0.6);
+            opacity: 0.1; /* 初始暗淡 */
+            transition: opacity 1.5s ease;
+        }
+        .footer.light-on {
+            opacity: 1;
         }
         .modal {
             display: none;
@@ -218,18 +283,9 @@
             animation: popupShow 0.5s ease;
         }
         @keyframes popupShow {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-            80% {
-                transform: translate(-50%, -50%) scale(1.1);
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) scale(1);
-                opacity: 1;
-            }
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            80% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
         }
         .online-popup h2 {
             color: #00ff7f;
@@ -260,7 +316,16 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- 新增：全屏黑色蒙版 -->
+    <div id="startMask">
+        <div class="start-btn-container">
+            <button class="start-btn" id="startBtn">💡 点击开启战场</button>
+        </div>
+    </div>
+
+    <!-- 主容器 -->
+    <div class="container" id="mainContainer">
         <h1>三角洲紧急召集令</h1>
         <div class="reason">
             <span class="reason-text">事由：三角洲行动紧急开黑，急需王牌队友支援！参与作战人员如图，点击头像查看战力详情。</span>
@@ -291,8 +356,9 @@
             </div>
         </div>
     </div>
-    <div class="footer">现在立刻 三角洲集合！</div>
+    <div class="footer" id="mainFooter">现在立刻 三角洲集合！</div>
 
+    <!-- 弹窗部分 -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <h3 id="modalTitle"></h3>
@@ -307,7 +373,43 @@
         <button class="confirm-btn" onclick="closeOnlinePopup()">确认</button>
     </div>
 
+    <!-- 音频标签：去掉 autoplay，增加 ID，预加载 -->
+    <audio id="bgm" src="blingbling.MP3" loop preload="auto"></audio>
+
     <script>
+        // --- 新增：开场逻辑 ---
+        const startBtn = document.getElementById('startBtn');
+        const startMask = document.getElementById('startMask');
+        const bgm = document.getElementById('bgm');
+        const mainContainer = document.getElementById('mainContainer');
+        const mainFooter = document.getElementById('mainFooter');
+
+        // 设置音量
+        bgm.volume = 0.5;
+
+        startBtn.addEventListener('click', function() {
+            // 1. 播放音乐 (用户交互后必定成功)
+            bgm.play().then(() => {
+                console.log("BGM started successfully");
+            }).catch(error => {
+                console.error("Play failed:", error);
+            });
+
+            // 2. 隐藏黑色蒙版
+            startMask.classList.add('mask-hidden');
+
+            // 3. 让主界面变亮
+            mainContainer.classList.add('light-on');
+            mainFooter.classList.add('light-on');
+
+            // 4. 一秒后移除蒙版元素
+            setTimeout(() => {
+                startMask.style.display = 'none';
+            }, 1000);
+        });
+        // --- 开场逻辑结束 ---
+
+        // 原有逻辑
         function showModal(title, desc) {
             document.getElementById("modalTitle").innerText = title;
             document.getElementById("modalDesc").innerHTML = desc;
@@ -328,13 +430,25 @@
         const refuseBtn = document.getElementById('refuseBtn');
         refuseBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const windowWidth = window.innerWidth - 150;
-            const windowHeight = window.innerHeight - 80;
+            // 获取可视区域大小，减去按钮本身的宽高防止溢出
+            const windowWidth = window.innerWidth - 100;
+            const windowHeight = window.innerHeight - 50;
+            
             const randomLeft = Math.floor(Math.random() * windowWidth);
             const randomTop = Math.floor(Math.random() * windowHeight);
-            this.style.left = randomLeft + 'px';
-            this.style.top = randomTop + 'px';
-            this.style.transform = 'scale(1.05)';
+            
+            // 拒绝按钮使用了 fixed/absolute 定位，这里直接修改 left/top
+            // 为了防止它跑出屏幕太远，限制在视口内
+            // 注意：因为初始 CSS用了 transform: translate(-50%, -50%)，计算时要考虑中心点
+            this.style.position = 'fixed'; // 确保它是相对于窗口定位的
+            this.style.left = Math.max(50, randomLeft) + 'px';
+            this.style.top = Math.max(50, randomTop) + 'px';
+            this.style.transform = 'translate(-50%, -50%) scale(1.05)';
+        });
+
+        // 鼠标移入拒绝按钮时也逃跑（增加难度，可选）
+        refuseBtn.addEventListener('mouseover', function() {
+           // 如果你想让鼠标一碰到就跑，可以把上面的 click 逻辑复制一份放在这里
         });
 
         const acceptBtn = document.getElementById('acceptBtn');
@@ -342,13 +456,15 @@
         
         acceptBtn.addEventListener('click', function() {
             onlinePopup.style.display = 'block';
+            // 确保点击接受时音乐也在放（双重保险）
+            if(bgm.paused) {
+                bgm.play();
+            }
         });
 
         function closeOnlinePopup() {
             onlinePopup.style.display = 'none';
         }
     </script>
-    <audio  autoplay loop src="blingbling.MP3"></audio>
 </body>
 </html>
-
